@@ -1,0 +1,6 @@
+---
+- name: Создание конфигурационных файлов
+  hosts: srv-docker-05
+  roles:
+    - role: deploy_web_one_s
+      tags: vrd

@@ -1,0 +1,10 @@
+# 1c publication
+Alias "/{{ database }}" "/usr/local/apache2/htdocs/{{ database }}/"
+<Directory "/usr/local/apache2/htdocs/{{ database }}">
+    AllowOverride All
+    Options None
+    Order allow,deny
+    Allow from all
+    SetHandler 1c-application
+    ManagedApplicationDescriptor "/usr/local/apache2/htdocs/{{ database }}/default.vrd"
+</Directory>

@@ -1,0 +1,2 @@
+[docker_servers]
+srv-docker-05   ansible_host=srv-docker-05.gkk.guru  ansible_user=grushevskyv    ansible_port=22

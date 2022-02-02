@@ -1,0 +1,100 @@
+---
+- name: Подготовка к публикации
+  block:
+    - name: Создание директорий для хранения кофигураций и vrd файлов
+      ansible.builtin.file:
+        path: "{{ path_to_temp_files }}/{{ item }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ list_temp_directories }}"
+
+    - name: Определение имени дистрибутива 1c
+      ansible.builtin.set_fact:
+        file_name_1c: "server64_{{ version_1c | replace('.', '_') }}.tar.gz"
+
+  tags: get_dist
+
+- name: Получение дистрибутива 1С
+  block:
+    - name: Загружаем дистрибутив 1С
+      ansible.builtin.get_url:
+        url: "ftp://{{ ftp.user }}:{{ ftp.password }}@{{ ftp.path }}/{{ version_1c }}/{{ file_name_1c }}"
+        dest: "{{ path_to_temp_files }}/distribution"
+
+  tags: get_dist
+
+- name: Создание файлов для сборки
+  block:
+    - name: Создание WEB публикаций
+      include_tasks: "../services/create_conf_vrd_file.yml"
+      vars:
+        - database: "{{ item.database }}"
+        - server: "{{ item.server }}"
+        - type_vrd: "{{ item.type }}"
+      loop: "{{ databases }}"
+
+    - name: Создание Dockerfile и конфигурации apache2
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "{{ path_to_temp_files }}"
+        owner: grushevskyv
+        group: grushevskyv
+        mode: "0644"
+      loop:
+        - Dockerfile
+        - apache2.conf
+
+  tags: get_dist
+
+- name: Работаем с images
+  block:
+    - name: Логинемся на DockerHub
+      community.docker.docker_login:
+        username: "{{ docker.user }}"
+        password: "{{ docker.password }}"
+
+    # - name: Обновляем image http
+    #   community.docker.docker_image:
+    #     name: http
+    #     tag: 2.4
+    #     source: pull
+    #     # pull:
+    #     #   platform: amd64
+
+    - name: Собираем image
+      community.docker.docker_image:
+        name: grushevskyv/one_s-apache-client
+        tag: latest
+        push: no
+        build:
+          path: "{{ path_to_temp_files }}"
+          dockerfile: "{{ path_to_temp_files }}/Dockerfile"
+        source: build
+
+    - name: Log out of DockerHub
+      community.docker.docker_login:
+        state: absent
+        username: "{{ docker.user }}"
+
+  tags: images
+
+- name: Запускаем контейнер
+  block:
+    - name: Запуск контейнера
+      community.docker.docker_container:
+        name: httpd_1c
+        image: grushevskyv/one_s-apache-client
+        restart_policy: on-failure
+        state: started
+        ports: "8085:80"
+
+  tags: start
+
+- name: Очистка после работы
+  block:
+    - name: Удаляем временные файлы
+      ansible.builtin.file:
+        path: "{{ path_to_temp_files }}"
+        state: absent
+
+  tags: clean
