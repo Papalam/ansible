@@ -1,2 +1,12 @@
-[docker_servers]
+[ppl:children]
+manager
+nodes
+
+[manager]
 srv-docker-05   ansible_host=srv-docker-05.gkk.guru  ansible_user=grushevskyv    ansible_port=22
+
+[nodes]
+srv-docker-01   ansible_host=srv-docker-01.gkk.guru  ansible_user=grushevskyv    ansible_port=22
+srv-docker-02   ansible_host=srv-docker-02.gkk.guru  ansible_user=grushevskyv    ansible_port=22
+srv-docker-03   ansible_host=srv-docker-03.gkk.guru  ansible_user=grushevskyv    ansible_port=22
+srv-docker-04   ansible_host=srv-docker-04.gkk.guru  ansible_user=grushevskyv    ansible_port=22

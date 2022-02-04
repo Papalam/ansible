@@ -1,0 +1,6 @@
+---
+- name: Создание конфигурационных файлов
+  hosts: docker_manager
+  roles:
+    - role: deploy_web_one_s
+      tags: vrd

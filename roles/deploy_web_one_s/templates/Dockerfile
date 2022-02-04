@@ -8,3 +8,5 @@ COPY ./apache2.conf /usr/local/apache2/conf/httpd.conf
 ADD ./config/ /usr/local/apache2/conf/1c_conf/
 ADD ./vrd/ /usr/local/apache2/htdocs/
 COPY --from=build /opt/1cv8/ /opt/1cv8/
+
+EXPOSE 80

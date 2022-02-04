@@ -86,7 +86,7 @@
         image: grushevskyv/one_s-apache-client
         restart_policy: on-failure
         state: started
-        ports: "8085:80"
+        ports: "{{ web_1c_service.port }}:80"
 
   tags: start
 
@@ -98,3 +98,8 @@
         state: absent
 
   tags: clean
+
+- name: Проверка переменных
+  ansible.builtin.debug:
+    msg: "Переменная {{ web_1c_service.port }}"
+  tags: test
