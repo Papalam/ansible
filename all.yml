@@ -4,3 +4,9 @@
   roles:
     - role: deploy_web_one_s
       tags: vrd
+
+- name: Установка платформы 1С
+  hosts: srv-1c-03
+  roles:
+    - role: update_platform_1c
+      tags: platform_1c

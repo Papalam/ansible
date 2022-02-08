@@ -1,6 +1,7 @@
 [ppl:children]
 manager
 nodes
+one_s_servers
 
 [manager]
 srv-docker-05   ansible_host=srv-docker-05.gkk.guru  ansible_user=grushevskyv    ansible_port=22
@@ -10,3 +11,10 @@ srv-docker-01   ansible_host=srv-docker-01.gkk.guru  ansible_user=grushevskyv   
 srv-docker-02   ansible_host=srv-docker-02.gkk.guru  ansible_user=grushevskyv    ansible_port=22
 srv-docker-03   ansible_host=srv-docker-03.gkk.guru  ansible_user=grushevskyv    ansible_port=22
 srv-docker-04   ansible_host=srv-docker-04.gkk.guru  ansible_user=grushevskyv    ansible_port=22
+
+[one_s_servers]
+srv-1c-01       ansible_host=srv-1c-01.gkk.guru  ansible_user=grushevskyv    ansible_port=22
+srv-1c-02       ansible_host=srv-1c-02.gkk.guru  ansible_user=grushevskyv    ansible_port=22
+srv-1c-03       ansible_host=srv-1c-03.gkk.guru  ansible_user=grushevskyv    ansible_port=22
+srv-1c-04       ansible_host=srv-1c-04.gkk.guru  ansible_user=grushevskyv    ansible_port=22
+srv-1c-05       ansible_host=srv-1c-05.gkk.guru  ansible_user=grushevskyv    ansible_port=22

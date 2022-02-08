@@ -1,0 +1,63 @@
+---
+- name: Подготовка, получение и установка 1С платформы
+  block:
+    - name: Создание временной директории
+      ansible.builtin.file:
+        path: "{{ path_to_temp_files }}"
+        state: directory
+        mode: "0755"
+
+    - name: Определение имени дистрибутива 1c
+      ansible.builtin.set_fact:
+        file_name_1c: "server64_{{ version_1c | replace('.', '_') }}.tar.gz"
+
+    - name: Получение дистирибутива 1С
+      ansible.builtin.get_url:
+        url: "ftp://{{ ftp.user }}:{{ ftp.password }}@{{ ftp.path }}/{{ version_1c }}/{{ file_name_1c }}"
+        dest: "{{ path_to_temp_files }}"
+
+    - name: Распаковка дистрибутива 1С
+      ansible.builtin.unarchive:
+        src: "{{ path_to_temp_files }}/{{ file_name_1c }}"
+        dest: "{{ path_to_temp_files }}/"
+        remote_src: yes
+
+    - name: Установка платформы 1С
+      ansible.builtin.command: "{{ path_to_temp_files }}/setup-full-{{ version_1c }}-x86_64.run --mode unattended --enable-components server,ws,ru"
+
+    - name: Удаление временных файлов
+      ansible.builtin.file:
+        path: "{{ path_to_temp_files }}"
+        state: absent
+
+  become: yes
+  tags: platform
+
+- name: Работа с сервисами 1С
+  block:
+    - name: Отключение текущего сервиса 1С
+      ansible.builtin.service:
+        name: srv1cv83
+        state: stopped
+        enabled: no
+
+    - name: Копирование сервиса в init.d
+      ansible.builtin.copy:
+        src: "/opt/1cv8/x86_64/{{ version_1c }}/srv1cv83"
+        dest: /etc/init.d/srv1cv83
+        remote_src: yes
+
+    - name: Копирование описания сервиса 1C
+      ansible.builtin.copy:
+        src: "/opt/1cv8/x86_64/{{ version_1c }}/srv1cv83.conf"
+        dest: /etc/sysconfig/srv1cv83
+        remote_src: yes
+
+    - name: Запуск сервиса 1С
+      ansible.builtin.service:
+        name: srv1cv83
+        state: started
+        enabled: yes
+
+  become: yes
+  tags: services
