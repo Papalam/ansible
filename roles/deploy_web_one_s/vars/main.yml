@@ -1,16 +1,2 @@
 ---
 version_1c: 8.3.20.1674
-
-path_to_temp_files: /tmp/docker_tmp
-list_temp_directories:
-  - config
-  - vrd
-  - distribution
-
-databases:
-  - database: HS__BP
-    server: srv-1c-05.gkk.guru
-    type: UT
-  - database: SO__UT11_COPY
-    server: srv-1c-05.gkk.guru
-    type: UT

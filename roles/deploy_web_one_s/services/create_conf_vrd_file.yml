@@ -2,21 +2,21 @@
 - name: "[{{ database }}] собираем кофигурационный файл"
   ansible.builtin.template:
     src: conf.j2
-    dest: "{{ path_to_temp_files }}/config/{{ database }}.conf"
+    dest: "{{ path_to_temp_files }}/config/{{ url }}.conf"
     owner: grushevskyv
     group: grushevskyv
     mode: "0644"
 
 - name: "[{{ database }}] Создаем директорию для файла vrd"
   ansible.builtin.file:
-    path: "{{ path_to_temp_files }}/vrd/{{ database }}"
+    path: "{{ path_to_temp_files }}/vrd/{{ url }}"
     state: directory
     mode: 0755
 
 - name: "[{{ database }}] собираем vrd файл"
   ansible.builtin.template:
-    src: "{{ type_vrd }}_vrd.j2"
-    dest: "{{ path_to_temp_files }}/vrd/{{ database }}/default.vrd"
+    src: "vrd_{{ type_vrd }}.j2"
+    dest: "{{ path_to_temp_files }}/vrd/{{ url }}/default.vrd"
     owner: grushevskyv
     group: grushevskyv
     mode: "0644"

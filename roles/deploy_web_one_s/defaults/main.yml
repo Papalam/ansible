@@ -1,0 +1,6 @@
+---
+path_to_temp_files: /tmp/docker_tmp
+list_temp_directories:
+  - config
+  - vrd
+  - distribution

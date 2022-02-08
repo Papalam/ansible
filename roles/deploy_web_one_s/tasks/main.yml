@@ -12,7 +12,7 @@
       ansible.builtin.set_fact:
         file_name_1c: "server64_{{ version_1c | replace('.', '_') }}.tar.gz"
 
-  tags: get_dist
+  tags: not_clean
 
 - name: Получение дистрибутива 1С
   block:
@@ -21,7 +21,7 @@
         url: "ftp://{{ ftp.user }}:{{ ftp.password }}@{{ ftp.path }}/{{ version_1c }}/{{ file_name_1c }}"
         dest: "{{ path_to_temp_files }}/distribution"
 
-  tags: get_dist
+  tags: not_clean
 
 - name: Создание файлов для сборки
   block:
@@ -30,6 +30,7 @@
       vars:
         - database: "{{ item.database }}"
         - server: "{{ item.server }}"
+        - url: "{{ item.url }}"
         - type_vrd: "{{ item.type }}"
       loop: "{{ databases }}"
 
@@ -44,7 +45,7 @@
         - Dockerfile
         - apache2.conf
 
-  tags: get_dist
+  tags: not_clean
 
 - name: Работаем с images
   block:
@@ -76,10 +77,15 @@
         state: absent
         username: "{{ docker.user }}"
 
-  tags: images
+  tags: image
 
-- name: Запускаем контейнер
+- name: Работа с контейнерами
   block:
+    - name: Остановка и удаление контейнера
+      community.docker.docker_container:
+        name: httpd_1c
+        state: absent
+    
     - name: Запуск контейнера
       community.docker.docker_container:
         name: httpd_1c
@@ -88,7 +94,7 @@
         state: started
         ports: "{{ web_1c_service.port }}:80"
 
-  tags: start
+  tags: image
 
 - name: Очистка после работы
   block:
@@ -99,7 +105,8 @@
 
   tags: clean
 
-- name: Проверка переменных
-  ansible.builtin.debug:
-    msg: "Переменная {{ web_1c_service.port }}"
-  tags: test
+# - name: Проверка переменных
+#   ansible.builtin.debug:
+#     msg: "Переменная {{ web_1c_service.port }} | {{ item.database }}"
+#   loop: "{{ databases }}"
+#   tags: test
