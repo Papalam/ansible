@@ -1,0 +1,11 @@
+---
+- name: "Запуск сервиса {{ name_web_swarm_service_1c }}"
+  community.docker.docker_swarm_service:
+    name: "{{ name_web_swarm_service_1c }}"
+    image: "{{ web_1c_service.image }}:latest"
+    publish:
+      - mode: ingress
+        published_port: "{{ web_1c_service.port }}"
+        target_port: 80
+    force_update: true
+    replicas: 2

@@ -1,12 +1,15 @@
 ---
 - name: Создание конфигурационных файлов
-  hosts: srv-docker-05
+  hosts: manager
   roles:
-    - role: deploy_web_one_s
-      tags: vrd
+    - role: build_web_one_s
+      tags: build_web_service
 
-- name: Установка платформы 1С
-  hosts: srv-1c-03
-  roles:
-    - role: update_platform_1c
-      tags: platform_1c
+    - role: deploy_service_web_one_s
+      tags: deploy_web_service
+
+# - name: Установка платформы 1С
+#   hosts: srv-1c-03
+#   roles:
+#     - role: update_platform_1c
+#       tags: platform_1c

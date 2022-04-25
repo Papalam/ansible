@@ -13,7 +13,8 @@
 
     - name: Получение дистирибутива 1С
       ansible.builtin.get_url:
-        url: "ftp://{{ ftp.user }}:{{ ftp.password }}@{{ ftp.path }}/{{ version_1c }}/{{ file_name_1c }}"
+        # url: "ftp://{{ ftp.user }}:{{ ftp.password }}@{{ ftp.path }}/{{ version_1c }}/{{ file_name_1c }}"
+        url: "https://profi.express/platforms/{{ version_1c }}/{{ file_name_1c }}"
         dest: "{{ path_to_temp_files }}"
 
     - name: Распаковка дистрибутива 1С

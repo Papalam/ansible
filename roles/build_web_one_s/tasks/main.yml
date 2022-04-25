@@ -1,11 +1,11 @@
 ---
 - name: Подготовка к публикации
   block:
-    - name: Создание директорий для хранения кофигураций и vrd файлов
+    - name: Создание директорий для хранения конфигураций и vrd файлов
       ansible.builtin.file:
         path: "{{ path_to_temp_files }}/{{ item }}"
         state: directory
-        mode: "0755"
+        mode: 0755
       loop: "{{ list_temp_directories }}"
 
     - name: Определение имени дистрибутива 1c
@@ -26,7 +26,7 @@
 - name: Создание файлов для сборки
   block:
     - name: Создание WEB публикаций
-      include_tasks: "../services/create_conf_vrd_file.yml"
+      ansible.builtin.include_tasks: "../services/create_conf_vrd_file.yml"
       vars:
         - database: "{{ item.database }}"
         - server: "{{ item.server }}"
@@ -49,64 +49,25 @@
 
 - name: Работаем с images
   block:
-    - name: Логинемся на DockerHub
-      community.docker.docker_login:
-        username: "{{ docker.user }}"
-        password: "{{ docker.password }}"
-
-    # - name: Обновляем image http
-    #   community.docker.docker_image:
-    #     name: http
-    #     tag: 2.4
-    #     source: pull
-    #     # pull:
-    #     #   platform: amd64
+    - name: Обновляем image httpd
+      community.docker.docker_image:
+        name: httpd
+        source: pull
+        tag: 2.4
+        pull:
+          platform: amd64
 
     - name: Собираем image
       community.docker.docker_image:
-        name: grushevskyv/one_s-apache-client
+        name: "{{ web_1c_service.image }}"
         tag: latest
-        push: no
+        force_source: true
+        force_tag: true
+        push: "{{ web_1c_service.is_push }}"
         build:
           path: "{{ path_to_temp_files }}"
           dockerfile: "{{ path_to_temp_files }}/Dockerfile"
         source: build
-
-    - name: Log out of DockerHub
-      community.docker.docker_login:
-        state: absent
-        username: "{{ docker.user }}"
+      notify: Cleaner
 
   tags: image
-
-- name: Работа с контейнерами
-  block:
-    - name: Остановка и удаление контейнера
-      community.docker.docker_container:
-        name: httpd_1c
-        state: absent
-    
-    - name: Запуск контейнера
-      community.docker.docker_container:
-        name: httpd_1c
-        image: grushevskyv/one_s-apache-client
-        restart_policy: on-failure
-        state: started
-        ports: "{{ web_1c_service.port }}:80"
-
-  tags: image
-
-- name: Очистка после работы
-  block:
-    - name: Удаляем временные файлы
-      ansible.builtin.file:
-        path: "{{ path_to_temp_files }}"
-        state: absent
-
-  tags: clean
-
-# - name: Проверка переменных
-#   ansible.builtin.debug:
-#     msg: "Переменная {{ web_1c_service.port }} | {{ item.database }}"
-#   loop: "{{ databases }}"
-#   tags: test

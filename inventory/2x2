@@ -10,8 +10,8 @@ docker-server   ansible_host=192.168.0.152  ansible_user=grushevskyv    ansible_
 srv-docker-01   ansible_host=192.168.0.153  ansible_user=grushevskyv    ansible_port=22
 
 [partner_soyuz_servers_1c]
-srv-app-02  ansible_host=192.168.0.37  ansible_user=grushevskyv    ansible_port=22
-srv-app-03  ansible_host=192.168.0.38  ansible_user=grushevskyv    ansible_port=22
-srv-app-04  ansible_host=192.168.0.39  ansible_user=grushevskyv    ansible_port=22
-srv-app-05  ansible_host=192.168.0.40  ansible_user=grushevskyv    ansible_port=22
-srv-app-06  ansible_host=192.168.0.41  ansible_user=grushevskyv    ansible_port=22
+srv-app-02  ansible_host=192.168.0.37  ansible_user=root    ansible_port=22
+srv-app-03  ansible_host=192.168.0.38  ansible_user=root    ansible_port=22
+srv-app-04  ansible_host=192.168.0.39  ansible_user=root    ansible_port=22
+srv-app-05  ansible_host=192.168.0.40  ansible_user=root    ansible_port=22
+srv-app-06  ansible_host=192.168.0.41  ansible_user=root    ansible_port=22
