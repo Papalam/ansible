@@ -12,7 +12,7 @@
       ansible.builtin.set_fact:
         file_name_1c: "server64_{{ version_1c | replace('.', '_') }}.tar.gz"
 
-  tags: not_clean
+  tags: prepare_step
 
 - name: Получение дистрибутива 1С
   block:
@@ -20,6 +20,8 @@
       ansible.builtin.get_url:
         url: "ftp://{{ ftp.user }}:{{ ftp.password }}@{{ ftp.path }}/{{ version_1c }}/{{ file_name_1c }}"
         dest: "{{ path_to_temp_files }}/distribution"
+  # rescue:
+  #   - name: Копируем предварительно записанный дистрибутив
 
   tags: not_clean
 
@@ -45,7 +47,7 @@
         - Dockerfile
         - apache2.conf
 
-  tags: not_clean
+  tags: vrd
 
 - name: Работаем с images
   block:

@@ -4,7 +4,7 @@ docker_node
 partner_soyuz_servers_1c
 
 [docker_manager]
-docker-server   ansible_host=192.168.0.152  ansible_user=grushevskyv    ansible_port=22
+docker-server   ansible_host=192.168.0.152  ansible_user=root    ansible_port=22
 
 [docker_node]
 srv-docker-01   ansible_host=192.168.0.153  ansible_user=grushevskyv    ansible_port=22

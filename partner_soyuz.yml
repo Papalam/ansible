@@ -2,11 +2,22 @@
 - name: Создание конфигурационных файлов
   hosts: docker_manager
   roles:
-    - role: deploy_web_one_s
-      tags: vrd
+    - role: build_web_one_s
+      tags: build_web_service
 
-- name: Обновление платформы 1С
-  hosts: srv-app-03
-  roles:
-    - role: update_platform_1c
-      tags: update_1c
+- name: Работа с контейнером
+  hosts: docker_manager
+  tasks:
+    - name: Остановка запущенного контейнера
+      community.docker.docker_container:
+        name: apache_1c
+        state: absent
+      tags: stop_container
+
+    - name: Запуск нового контейнера
+      community.docker.docker_container:
+        name: apache_1c
+        image: localhost:5000/one_s-apache-client:latest
+        ports:
+          - "80:80"
+      tags: start_container
