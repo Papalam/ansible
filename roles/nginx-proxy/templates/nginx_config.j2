@@ -1,0 +1,20 @@
+server {
+    listen                    80;
+    server_name               gws.gkk.guru;
+    keepalive_timeout         70;
+
+    {% for base in databases %}
+    location /{{ base.database }}/ {
+        {% if base.server == 'srv-1c-01.gkk.guru' %}
+        proxy_pass http://192.168.55.33:8086/KA24/;
+        {% else %}
+        proxy_pass http://192.168.55.33:8087/KA24/;
+        {% endif %}
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+    {% endfor %}
+}

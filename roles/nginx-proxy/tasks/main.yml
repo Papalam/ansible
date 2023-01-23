@@ -1,0 +1,6 @@
+---
+- name: Создаем конфигурационный файл Ngnix
+  vars:
+    config_file: "{{ lookup('template', 'nginx_config.j2') }}"
+  ansible.builtin.debug:
+    msg: "{{ config_file }}"
