@@ -1,5 +1,5 @@
 ---
 web_1c_service:
-  image: localhost:5000/one_s-apache-client_22_1709
-  port: 8086
+  image: localhost:5000/one_s-apache-client_22_1750
+  port: 8087
   is_push: true
