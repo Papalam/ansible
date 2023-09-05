@@ -1,40 +1,42 @@
 ---
 - name: Подготовка к публикации
+  tags: prepare_step
   block:
     - name: Создание директорий для хранения конфигураций и vrd файлов
       ansible.builtin.file:
         path: "{{ path_to_temp_files }}/{{ item }}"
         state: directory
-        mode: 0755
+        mode: "0755"
       loop: "{{ list_temp_directories }}"
 
     - name: Определение имени дистрибутива 1c
       ansible.builtin.set_fact:
         file_name_1c: "server64_{{ version_1c | replace('.', '_') }}.tar.gz"
 
-  tags: prepare_step
-
 - name: Получение дистрибутива 1С
+  tags: not_clean
   block:
     - name: Загружаем дистрибутив 1С
       ansible.builtin.get_url:
         url: "ftp://{{ ftp.user }}:{{ ftp.password }}@{{ ftp.path }}/{{ version_1c }}/{{ file_name_1c }}"
         dest: "{{ path_to_temp_files }}/distribution"
+        mode: "0755"
   # rescue:
   #   - name: Копируем предварительно записанный дистрибутив
 
-  tags: not_clean
-
 - name: Создание файлов для сборки
+  tags: vrd
   block:
     - name: Создание WEB публикаций
       ansible.builtin.include_tasks: "../services/create_conf_vrd_file.yml"
-      vars:
-        - database: "{{ item.database }}"
-        - server: "{{ item.server }}"
-        - url: "{{ item.url }}"
-        - type_vrd: "{{ item.type }}"
       loop: "{{ databases }}"
+      loop_control:
+        loop_var: item
+      vars:
+        database: "{{ item.database }}"
+        server: "{{ item.server }}"
+        url: "{{ item.url }}"
+        type_vrd: "{{ item.type }}"
 
     - name: Создание Dockerfile и конфигурации apache2
       ansible.builtin.template:
@@ -47,9 +49,8 @@
         - Dockerfile
         - apache2.conf
 
-  tags: vrd
-
 - name: Работаем с images
+  tags: image
   block:
     - name: Обновляем image httpd
       community.docker.docker_image:
@@ -71,5 +72,3 @@
           dockerfile: "{{ path_to_temp_files }}/Dockerfile"
         source: build
       notify: Cleaner
-
-  tags: image

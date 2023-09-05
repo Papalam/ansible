@@ -5,13 +5,13 @@
     dest: "{{ path_to_temp_files }}/config/{{ url }}.conf"
     owner: grushevskyv
     group: grushevskyv
-    mode: 0644
+    mode: "0644"
 
 - name: "[{{ database }}] Создаем директорию для файла vrd"
   ansible.builtin.file:
     path: "{{ path_to_temp_files }}/vrd/{{ url }}"
     state: directory
-    mode: 0755
+    mode: "0755"
 
 - name: "[{{ database }}] собираем vrd файл"
   ansible.builtin.template:
@@ -19,4 +19,4 @@
     dest: "{{ path_to_temp_files }}/vrd/{{ url }}/default.vrd"
     owner: grushevskyv
     group: grushevskyv
-    mode: 0644
+    mode: "0644"
